@@ -17,9 +17,9 @@ int main() {
 	int num_rows = NUM_ROWS(matrix);
 	int num_cols = NUM_COLS(matrix);
 
-	for (int x = 0; x <= num_rows; x++) {
-		for (int y = 0; y <= num_cols; y++) {
-			printf("%d", matrix[x][y]);
+	for (int x = 0; x < num_rows; x++) {
+		for (int y = 0; y < num_cols; y++) {
+			printf("%d ", matrix[x][y]);
 		}
 		printf("\n");
 	}
