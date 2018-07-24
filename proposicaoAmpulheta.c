@@ -8,6 +8,8 @@
 #define INITIAL_ROW 6
 #define INITIAL_COL 6
 #define MAGICAL_NUMBER 3
+#define INITIAL_RESULT_ROW INITIAL_ROW / MAGICAL_NUMBER
+#define INITIAL_RESULT_COL INITIAL_COL / MAGICAL_NUMBER
 
 int matrix[INITIAL_ROW][INITIAL_COL] = {
 {1, 2, 2, 0, 0, 0},
@@ -27,18 +29,58 @@ void printMatrix(int (*matrix)[INITIAL_COL], int rows, int cols) {
 	}
 }
 
+void printDynamicMatrix(int *matrix, int rows, int cols) {
+	int offset = 0;
+	for (int x = 0; x < rows; x++) {
+		for (int y = 0; y < cols; y++) {
+			offset = x * INITIAL_RESULT_COL + y;
+			printf("%d ", matrix[offset]);
+		}
+		printf("\n");
+	}
+}
+
+void resetDynamicMatrix(int *matrix, int rows, int cols) {
+	int offset = 0;
+	for (int x = 0; x < rows; x++) {
+                for (int y = 0; y < cols; y++) {
+			offset = x * INITIAL_RESULT_COL + y;
+			matrix[offset] = 0;
+		}
+	}
+}
+
+void countHourglass(int (*matrix)[INITIAL_COL], int rows, int cols, int *matrixResult) {
+	int i = 0, j = 0, offset = 0;
+        for (int x = 0; x < rows; x++) {
+		i = x / MAGICAL_NUMBER;
+                for (int y = 0; y < cols; y++) {
+			j = y / MAGICAL_NUMBER;
+			//printf(" i = %d , j = %d  || x = %d , y = %d \n", i, j, x, y);
+			offset = i * INITIAL_RESULT_COL + j;
+
+			matrixResult[offset] += matrix[x][y];
+		}
+	}
+}
+
 int main() {
 	//https://stackoverflow.com/questions/2128728/allocate-matrix-in-c
-	int *matrixResult = (int *) malloc(INITIAL_ROW/MAGICAL_NUMBER * INITIAL_COL/MAGICAL_NUMBER * sizeof(int));
-	//int *matrixResult = (int) malloc(2 * 2 * sizeof(int));
+	int *matrixResult = (int *) malloc(INITIAL_RESULT_ROW * INITIAL_RESULT_COL * sizeof(int));
 
 	int num_rows = NUM_ROWS(matrix);
 	int num_cols = NUM_COLS(matrix);
 	printMatrix(matrix, num_rows, num_cols);
 
-	printf("\nOi!\n");
+	printf("\nResetting result matrix!\n");
 
-//	printMatrix(matrixResult);
+	resetDynamicMatrix(matrixResult, INITIAL_RESULT_ROW, INITIAL_RESULT_COL);
+	printDynamicMatrix(matrixResult, INITIAL_RESULT_ROW, INITIAL_RESULT_COL);
+
+	printf("\nApplying new results!\n");
+
+	countHourglass(matrix, num_rows, num_cols, matrixResult);
+	printDynamicMatrix(matrixResult, INITIAL_RESULT_ROW, INITIAL_RESULT_COL);
 
 	return 0;
 }
