@@ -1,7 +1,10 @@
 #!/usr/bin/tclsh
 set MATRIX_FILE {random_matrix.txt}
 set MATRIX_LENGTH 1000
-set RAND_SIGNAL [list {} {-}]
+set ::RAND_SIGNAL(0) {}
+set ::RAND_SIGNAL(1) {-}
+set ::RAND_VALUE(0) 9
+set ::RAND_VALUE(1) 8
 
 puts "What is the name of file (default: $MATRIX_FILE)"
 gets stdin matrix_file
@@ -25,18 +28,19 @@ proc rand_integer {limit} {
 	return [string index [expr rand() * $limit] 0]
 }
 
-proc rand_integer_negative {limit} {
-	
+proc rand_integer_signal {} {
+	set bit [rand_integer 2]
+	return $::RAND_SIGNAL($bit)[expr [rand_integer $::RAND_VALUE($bit)] + $bit]
 }
-
-set lst_opcoes {-9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9}
-set lst_opcoes_rand [expr [llength $lst_opcoes] -1]
-puts $lst_opcoes_rand
 
 set channel [open $matrix_file w]
-set i 0
-while {$i < $matrix_length} {
-#	puts -nonewline $channel " [lindex $RAND_SIGNAL [rand_integer 1]][rand_integer 9]"
-	puts -nonewline $channel " [lindex $lst_opcoes [rand_integer $lst_opcoes_rand]]"
-	incr i
+
+for {set i 0} {$i < $matrix_length} {incr i} {
+	set line ""
+	for {set j 0} {$j < $matrix_length} {incr j} {
+		append line "[rand_integer_signal] "
+	}
+	puts $channel [string trimright $line]
+
 }
+
