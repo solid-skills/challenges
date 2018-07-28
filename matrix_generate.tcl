@@ -29,7 +29,7 @@ proc rand_integer {limit} {
 }
 
 proc rand_integer_signal {} {
-	set bit [rand_integer 2]
+	set bit [expr rand() > 0.5]
 	return $::RAND_SIGNAL($bit)[expr [rand_integer $::RAND_VALUE($bit)] + $bit]
 }
 
